@@ -1,0 +1,34 @@
+name: nuget push
+description: add nuget sources before restore
+inputs:
+  nuser:
+    required: true
+    type: string
+  npass:
+    required: true
+    type: string
+  NUGET_KEY:
+    required: true
+    type: string  
+  NUGET_SOURCE:
+    required: true
+    type: string
+  NUGET_SYM_SOURCE:
+    required: true
+    type: string
+runs:
+  using: "composite"
+  steps:
+  - name: NugetSetup
+    run: |
+      dotnet nuget list source
+      dotnet nuget add source ${{ inputs.NUGET_SOURCE }} -n temp  --store-password-in-clear-text --username ${{ inputs.nuser }} --password ${{ inputs.npass }}
+      dotnet nuget list source
+      dotnet restore    
+    shell: bash
+  - name: EnvSetup
+    run: |
+      echo "NUGET_KEY=${{ inputs.NUGET_KEY }}" >> $GITHUB_ENV
+      echo "NUGET_SOURCE=${{ inputs.NUGET_SOURCE }}" >> $GITHUB_ENV
+      echo "NUGET_SYM_SOURCE=${{ inputs.NUGET_SYM_SOURCE }}" >> $GITHUB_ENV
+    shell: bash    
