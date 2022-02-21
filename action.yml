@@ -21,9 +21,7 @@ runs:
   steps:
   - name: NugetSetup
     run: |
-      dotnet nuget list source
       dotnet nuget add source ${{ inputs.NUGET_SOURCE }} -n temp  --store-password-in-clear-text --username ${{ inputs.nuser }} --password ${{ inputs.npass }}
-      dotnet nuget list source
       dotnet restore    
     shell: bash
   - name: EnvSetup
